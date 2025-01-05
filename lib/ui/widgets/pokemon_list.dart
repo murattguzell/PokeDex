@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poke_dex/data/entitity/poke_dex.dart';
-import 'package:poke_dex/services/pokemon_api.dart';
+import 'package:poke_dex/ui/cubit/pokemon_cubit.dart';
+import 'package:poke_dex/ui/widgets/pokemon_list_item.dart';
+import 'package:poke_dex/ui_helper/ui_helper.dart';
 
 class PokemonList extends StatefulWidget {
   const PokemonList({super.key});
@@ -15,27 +18,27 @@ class _PokemonListState extends State<PokemonList> {
   @override
   void initState() {
     super.initState();
-    pokemonList = PokemonApi.getPokemon();
+   context.read<PokemonCubit>().getPokemons();
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("build methodu çalıştı");
     return Scaffold(
-      body: FutureBuilder(
-          future: pokemonList,
-          builder: (context, snapShot) {
-            if (snapShot.hasData) {
-              List<PokeDex> pokemons = snapShot.data!;
-              return ListView.builder(
-                itemCount: pokemons.length,
+      body: BlocBuilder<PokemonCubit,List<PokeDex>>(
+          builder: (context, pokemonList) {
+            if (pokemonList.isNotEmpty) {
+              return GridView.builder(
+                itemCount: pokemonList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: UIHelper.getCrossAxisCount()),
                 itemBuilder: (context, index) {
-                  var currentPokemon = pokemons[index];
-                  return ListTile(
-                    title: Text(currentPokemon.name!),
-                  );
+                  debugPrint("item builder methodu çalıştı");
+                  var currentPokemon = pokemonList[index];
+                  return PokemonListItem(pokemon: currentPokemon);
                 },
               );
-            } else if (snapShot.hasError) {
+            } else if (pokemonList.isEmpty) {
               return const Center(child: Text("hata çıktı"));
             } else {
               return Center(

@@ -86,6 +86,7 @@ class PokeDex {
 }
 
 class Evolution {
+
   String? num;
   String? name;
 
@@ -94,13 +95,20 @@ class Evolution {
     this.name,
   });
 
-  factory Evolution.fromJson(Map<String, dynamic> json) => Evolution(
-    num: json["num"],
-    name: json["name"],
-  );
+  factory Evolution.fromJson(Map<String, dynamic> json) =>
+      Evolution(
+        num: json["num"],
+        name: json["name"],
+      );
 
-  Map<String, dynamic> toJson() => {
-    "num": num,
-    "name": name,
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "num": num,
+        "name": name,
+      };
+
+  @override
+  String toString() {
+    return 'Evolution{name: $name}';
+  }
 }
